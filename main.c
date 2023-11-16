@@ -1,70 +1,24 @@
 #include "monty.h"
-#define TOKEN_DELIMITER " \t\n\r"
-int token2_atoi = 0;
+stack_t *top = NULL;
 
 /**
- * main - main
- * @argc: counter of arguments
- * @argv: arguments received from the prompt
- * Return: nothing
+ * main - driver function for monty program
+ * @ac: argument count
+ * @av: argument vector
+ * Return: 0 on success
  */
 
-int main(int argc, char *argv[])
+int main(int ac, char *av[])
 {
-	if (argc != 2)
+	stack_t *stack;
+
+	stack = NULL;
+	if (ac != 2)
 	{
 		fprintf(stderr, "USAGE: monty file\n");
 		exit(EXIT_FAILURE);
 	}
-	main_f(argv[1]);
-	exit(EXIT_SUCCESS);
-}
-
-/**
- * main_f - tokenize and executing all functions
- * @str: arguments received from the prompt
- * Return: nothing
- */
-
-void main_f(char *str)
-{
-	FILE *stream;
-	size_t len = 0;
-	ssize_t read;
-	char *token1 = NULL, *token2 = NULL, *line = NULL;
-	stack_t *head = NULL;
-	unsigned int linecheck = 1;
-	int count = 0;
-
-	stream = fopen(str, "r");
-	if (stream == NULL)
-	{
-		fprintf(stderr, "Error: Can't open file %s\n", str);
+	if (read_execute_file(av[1], &stack) == -1)
 		exit(EXIT_FAILURE);
-	}
-	while ((read = getline(&line, &len, stream)) != -1)
-	{
-		while (line[0] == 32 || line[0] == 9)
-		{
-			line++;
-			count++;
-		}
-		if (line[0] == '\n' || line[0] == '\0')
-		{
-			linecheck++;
-			continue;
-		}
-		token1 = strtok(line, TOKEN_DELIMITER);
-		token2 = strtok(NULL, TOKEN_DELIMITER);
-		if (strcmp(token1, "push") == 0)
-			atoi_number(token2, linecheck);
-		select_op(token1, &head, linecheck);
-		linecheck++;
-	}
-	for (; count > 0; count--)
-		line--;
-	free(line);
-	free_list(head);
-	fclose(stream);
-	exit(EXIT_SUCCESS);
+	return (0);
 }
